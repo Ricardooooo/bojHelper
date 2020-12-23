@@ -6,7 +6,7 @@
     ElasticSearch为6.4.2
 
 ### 启动方式
- 注意：
+ 注意：在运行app.py之前，需要启动ElasticSearch服务
     
     python app.py
 
