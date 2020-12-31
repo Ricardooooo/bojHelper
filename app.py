@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import request
 import hashlib
-import getReply
+import tyuling_replay
 import time
 import re
 import xml.etree.ElementTree as ET
@@ -51,11 +51,18 @@ def weixin():
 
         # 判断类型并回复
         if msgType == "text":
-            question = xml.find('Content').text
-            reply = getReply.get_reply(question)
-            return reply_text(fromUser, toUser, reply)
+            content = xml.find('Content').text
+            # 根据公众号粉丝的ID生成符合要求的图灵机器人userid
+            if len(fromUser) > 31:
+                tuling_userid = str(fromUser[0:30])
+            else:
+                tuling_userid = str(fromUser)
+            tuling_userid = re.sub(r'[^A-Za-z0-9]+', '', tuling_userid)
+            # 调用图灵机器人API返回图灵机器人返回的结果
+            tuling_replay_text = tyuling_replay.get_message(content, tuling_userid)
+            return reply_text(fromUser, toUser, tuling_replay_text)
         else:
-            return reply_text(fromUser, toUser, "我只懂文字")
+            return reply_text(fromUser, toUser, "我只懂文字哦")
 
 
 def reply_text(to_user, from_user, content):
